@@ -1,5 +1,8 @@
 # Video Player
 
+[![npm version](https://badge.fury.io/js/vync-video-player.svg)](https://badge.fury.io/js/vync-video-player)
+[![npm downloads](https://img.shields.io/npm/dm/vync-video-player.svg)](https://www.npmjs.com/package/vync-video-player)
+
 A cross-platform video player library for React Native and Expo applications.
 
 ## Features
