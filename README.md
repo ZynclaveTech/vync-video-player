@@ -304,7 +304,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🤝 Support
 
 ### Documentation
-- [API Reference](https://github.com/ZynclaveTech/vync-video-player#api-reference)
 - [Examples](https://github.com/ZynclaveTech/vync-video-player#usage-examples)
 - [Troubleshooting](https://github.com/ZynclaveTech/vync-video-player/issues)
 
@@ -314,7 +313,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Stack Overflow**: Tag questions with `vync-video-player`
 
 ### Enterprise Support
-For enterprise support, custom implementations, or consulting services, contact us at [support@zynclave.tech](mailto:support@zynclave.tech)
+For enterprise support, custom implementations, or consulting services, contact us at [support@zynclave.tech](mailto:info@zynclave.com)
 
 ## 🙏 Acknowledgments
 
@@ -325,6 +324,6 @@ For enterprise support, custom implementations, or consulting services, contact 
 
 ---
 
-**Made with ❤️ by [Zynclave Tech](https://zynclave.tech)**
+**Made with ❤️ by [Zynclave Tech](https://vync.live)**
 
 *Transform your React Native apps with professional-grade video playback capabilities.*
