@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "vync-video-player": ["../src/index"],
+      "vync-video-player/*": ["../src/*"]
+    }
+  }
+}
