@@ -166,6 +166,31 @@ function FeedVideoPlayer() {
 }
 ```
 
+### Video Player with Thumbnails
+```tsx
+import React from 'react';
+import { VideoPlayerView } from 'vync-video-player';
+
+function VideoPlayerWithThumbnails() {
+  return (
+    <VideoPlayerView
+      url="https://example.com/video.mp4"
+      autoplay={true}
+      beginMuted={true}
+      // Thumbnail configuration
+      thumbnailUrl="https://example.com/thumbnail.jpg"
+      showThumbnailWhileLoading={true}
+      showThumbnailWhenInactive={true}
+      thumbnailStyle={{
+        borderRadius: 8,
+        opacity: 0.9
+      }}
+      style={{ width: '100%', height: 300 }}
+    />
+  );
+}
+```
+
 ## API Reference
 
 ### Props
@@ -179,6 +204,15 @@ function FeedVideoPlayer() {
 | `style` | ViewStyle | - | ❌ | Custom styling for the video player container |
 | `accessibilityLabel` | string | - | ❌ | Accessibility label for screen readers |
 | `accessibilityHint` | string | - | ❌ | Accessibility hint for screen readers |
+
+#### Thumbnail Support
+
+| Prop | Type | Default | Required | Description |
+|------|------|---------|----------|-------------|
+| `thumbnailUrl` | string | - | ❌ | URL of the thumbnail image to display |
+| `showThumbnailWhileLoading` | boolean | false | ❌ | Show thumbnail while video is loading |
+| `showThumbnailWhenInactive` | boolean | false | ❌ | Show thumbnail when video view is not active/visible |
+| `thumbnailStyle` | ImageStyle | - | ❌ | Custom styling for the thumbnail image |
 
 ### Events
 

@@ -113,6 +113,9 @@ function Player({
     ref.current?.enterFullscreen(fullscreenKeepDisplayOn)
   }
 
+  // Generate a sample thumbnail URL (you can replace this with actual thumbnail URLs)
+  const thumbnailUrl = `https://picsum.photos/400/300?random=${num}`
+
   return (
     <Pressable
       style={{
@@ -127,6 +130,10 @@ function Player({
         url={url}
         autoplay
         ref={ref}
+        // Thumbnail support
+        thumbnailUrl={thumbnailUrl}
+        showThumbnailWhileLoading={true}
+        showThumbnailWhenInactive={true}
         onError={e => {
           console.log('error', e.nativeEvent.error)
         }}

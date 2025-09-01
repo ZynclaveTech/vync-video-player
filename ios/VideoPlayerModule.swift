@@ -57,6 +57,19 @@ public class VideoPlayerModule: Module {
         view.forceTakeover = prop
       }
 
+      // Thumbnail support
+      Prop("thumbnailUrl") { (view: VideoView, prop: String?) in
+        view.thumbnailUrl = prop
+      }
+
+      Prop("showThumbnailWhileLoading") { (view: VideoView, prop: Bool) in
+        view.showThumbnailWhileLoading = prop
+      }
+
+      Prop("showThumbnailWhenInactive") { (view: VideoView, prop: Bool) in
+        view.showThumbnailWhenInactive = prop
+      }
+
       AsyncFunction("togglePlayback") { (view: VideoView) in
         view.togglePlayback()
       }

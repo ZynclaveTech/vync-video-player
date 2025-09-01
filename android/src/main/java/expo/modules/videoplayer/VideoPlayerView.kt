@@ -41,6 +41,11 @@ class VideoPlayerView(
     var beginMuted = true
     var ignoreAutoplay = false
 
+    // Thumbnail support
+    var thumbnailUrl: String? = null
+    var showThumbnailWhileLoading: Boolean = false
+    var showThumbnailWhenInactive: Boolean = false
+
     var isFullscreen: Boolean = false
         private set(value) {
             field = value

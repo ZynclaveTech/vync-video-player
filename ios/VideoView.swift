@@ -22,6 +22,11 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     }
   }
 
+  // Thumbnail support
+  var thumbnailUrl: String?
+  var showThumbnailWhileLoading: Bool = false
+  var showThumbnailWhenInactive: Bool = false
+
   // controls
   private var isLoading: Bool = false {
     didSet {

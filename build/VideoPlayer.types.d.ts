@@ -1,4 +1,4 @@
-import { NativeSyntheticEvent, StyleProp, ViewStyle } from 'react-native';
+import { NativeSyntheticEvent, StyleProp, ViewStyle, ImageStyle } from 'react-native';
 export type VideoPlayerViewProps = {
     url: string;
     autoplay: boolean;
@@ -6,6 +6,10 @@ export type VideoPlayerViewProps = {
     forceTakeover?: boolean;
     accessibilityHint?: string;
     accessibilityLabel?: string;
+    thumbnailUrl?: string;
+    showThumbnailWhileLoading?: boolean;
+    showThumbnailWhenInactive?: boolean;
+    thumbnailStyle?: StyleProp<ImageStyle>;
     onActiveChange?: (e: NativeSyntheticEvent<{
         isActive: boolean;
     }>) => void;
