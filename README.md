@@ -8,39 +8,39 @@
 
 > **Professional-grade video player library for React Native and Expo applications with native performance, smart autoplay, and comprehensive video format support.**
 
-## 🎯 Overview
+## Overview
 
 Vync Video Player is a high-performance, cross-platform video player library designed specifically for React Native and Expo applications. Built with native iOS and Android implementations, it provides smooth video playback, intelligent memory management, and an intuitive API for developers.
 
-## ✨ Key Features
+## Key Features
 
-### 🚀 **Performance & Optimization**
+### **Performance & Optimization**
 - **Native Performance**: Built with native iOS (AVPlayer) and Android (ExoPlayer) for optimal performance
 - **Smart Memory Management**: Efficient view recycling and automatic cleanup to prevent memory leaks
 - **Lazy Loading**: Videos only load when visible, reducing bandwidth and improving app performance
 - **Optimized Rendering**: Hardware-accelerated video rendering for smooth playback
 
-### 📱 **Cross-Platform Support**
+### **Cross-Platform Support**
 - **iOS Support**: Full native iOS integration with AVPlayer framework
 - **Android Support**: Native Android implementation using ExoPlayer
 - **Expo Compatible**: Works seamlessly with Expo managed and bare workflows
 - **React Native**: Compatible with all React Native versions 0.60+
 
-### 🎮 **Advanced Playback Features**
+### **Advanced Playback Features**
 - **Smart Autoplay**: Visibility-based autoplay that only plays videos when they're visible
 - **Fullscreen Experience**: Native fullscreen mode with proper orientation handling
 - **Audio Focus Management**: Intelligent audio handling that respects system audio policies
 - **Seamless Looping**: Built-in video looping with smooth transitions
 - **Progress Tracking**: Real-time playback progress and time remaining updates
 
-### 🎨 **Developer Experience**
+### **Developer Experience**
 - **TypeScript Support**: Full TypeScript definitions for better development experience
 - **Event-Driven Architecture**: Comprehensive event system for all player state changes
 - **Flexible Styling**: Customizable video player appearance and behavior
 - **Error Handling**: Robust error handling with detailed error information
 - **Accessibility**: Built-in accessibility support for screen readers
 
-## 🛠️ Installation
+## Installation
 
 ### Prerequisites
 - React Native 0.60+ or Expo SDK 40+
@@ -59,7 +59,7 @@ yarn add vync-video-player
 pnpm add vync-video-player
 ```
 
-## 📖 Usage Examples
+## Usage Examples
 
 ### Basic Video Player
 ```tsx
@@ -166,7 +166,7 @@ function FeedVideoPlayer() {
 }
 ```
 
-## 🔧 API Reference
+## API Reference
 
 ### Props
 
@@ -201,7 +201,7 @@ function FeedVideoPlayer() {
 | `toggleMuted()` | - | Toggle between muted and unmuted audio |
 | `enterFullscreen(keepDisplayOn?)` | `keepDisplayOn?: boolean` | Enter fullscreen mode with optional display wake lock |
 
-## 📱 Supported Video Formats
+## Supported Video Formats
 
 ### iOS (AVPlayer)
 - **Video Codecs**: H.264, H.265 (HEVC), MPEG-4
@@ -217,7 +217,7 @@ function FeedVideoPlayer() {
 - **Streaming**: HLS, DASH, SmoothStreaming
 - **Resolution**: Up to 8K (device dependent)
 
-## 🚀 Performance Features
+## Performance Features
 
 ### Memory Management
 - **View Recycling**: Efficient reuse of video player instances
@@ -231,14 +231,14 @@ function FeedVideoPlayer() {
 - **Battery Optimization**: Respects system power management
 - **Network Awareness**: Adapts to network conditions
 
-## 🔒 Security & Privacy
+## Security & Privacy
 
 - **No Data Collection**: Library doesn't collect user data or analytics
 - **Local Processing**: All video processing happens locally on device
 - **Secure URLs**: Supports HTTPS and secure video sources
 - **Privacy First**: No tracking or external service dependencies
 
-## 🌟 Use Cases
+## Use Cases
 
 ### Social Media Applications
 - **Video Feeds**: Instagram, TikTok-style video scrolling
@@ -264,7 +264,7 @@ function FeedVideoPlayer() {
 - **Marketing Content**: Promotional video delivery
 - **Corporate Communications**: Internal video messaging
 
-## 📊 Benchmarks
+## Benchmarks
 
 - **Startup Time**: < 100ms for video initialization
 - **Memory Usage**: < 50MB per video instance
@@ -272,7 +272,7 @@ function FeedVideoPlayer() {
 - **Network Efficiency**: Smart buffering with 5-second forward buffer
 - **Frame Rate**: Consistent 60fps playback on supported devices
 
-## 🛠️ Development
+## Development
 
 ### Building from Source
 ```bash
@@ -297,11 +297,11 @@ yarn start
 ### Contributing
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Support
+## Support
 
 ### Documentation
 - [Examples](https://github.com/ZynclaveTech/vync-video-player#usage-examples)
@@ -315,7 +315,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Enterprise Support
 For enterprise support, custom implementations, or consulting services, contact us at [support@zynclave.tech](mailto:info@zynclave.com)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with ❤️ by the Zynclave Tech team
 - Inspired by modern video streaming platforms
