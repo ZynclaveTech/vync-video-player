@@ -123,7 +123,7 @@ function Player({
       onPress={Platform.OS === 'ios' ? onPress : undefined}>
       <Text>Video: {num}</Text>
       <VideoPlayerView
-        beginMuted={true}
+        beginMuted={false}
         url={url}
         autoplay
         ref={ref}

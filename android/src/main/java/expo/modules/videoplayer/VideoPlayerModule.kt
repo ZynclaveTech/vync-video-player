@@ -21,7 +21,9 @@ class VideoPlayerModule : Module() {
             Name("VideoPlayer")
 
             OnCreate {
-                audioFocusManager = AudioFocusManager(appContext)
+                appContext.reactContext?.let { context ->
+                    audioFocusManager = AudioFocusManager(context)
+                }
             }
 
             OnActivityEntersForeground {

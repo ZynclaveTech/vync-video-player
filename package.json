@@ -1,7 +1,7 @@
 {
   "name": "vync-video-player",
-  "version": "0.0.4",
-  "description": "A cross-platform video player library for React Native and Expo",
+  "version": "0.0.5",
+  "description": "Vync Video Player is a high-performance, cross-platform video player library designed specifically for React Native and Expo applications. Built with native iOS and Android implementations, it provides smooth video playback, intelligent memory management, and an intuitive API for developers.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "private": false,
