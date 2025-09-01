@@ -1,5 +1,5 @@
 import {VideoPlayerView} from 'vync-video-player'
-import {updateActiveVideoViewAsync} from 'vync-video-player/VideoPlayerModule'
+import {updateActiveVideoViewAsync} from 'vync-video-player'
 import React from 'react'
 import {
   FlatList,
