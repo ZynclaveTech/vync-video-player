@@ -1,9 +1,3 @@
-//
-//  VideoPlayer
-//
-//  Created by Hailey on 9/10/24.
-//
-
 import Foundation
 
 class ViewManager: Manager<VideoView> {

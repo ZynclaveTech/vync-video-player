@@ -1,9 +1,3 @@
-//
-//  VideoPlayer
-//
-//  Created by Hailey on 9/10/24.
-//
-
 class Manager<T: AnyObject> {
   private let objects = NSHashTable<T>.weakObjects()
 
