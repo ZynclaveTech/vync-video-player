@@ -252,11 +252,15 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       (!self.isViewActive && self.showThumbnailWhenInactive)
     )
     
+    print("iOS updateThumbnailVisibility: isLoading=\(self.isLoading), isViewActive=\(self.isViewActive), showThumbnailWhileLoading=\(self.showThumbnailWhileLoading), showThumbnailWhenInactive=\(self.showThumbnailWhenInactive), shouldShowThumbnail=\(shouldShowThumbnail)")
+    
     if shouldShowThumbnail && self.thumbnailUrl != nil {
       self.loadThumbnailImage()
       thumbnailImageView.isHidden = false
+      print("iOS: Showing thumbnail")
     } else {
       thumbnailImageView.isHidden = true
+      print("iOS: Hiding thumbnail")
     }
   }
 
@@ -397,6 +401,7 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
   // MARK: - visibility
 
   func setIsCurrentlyActive(active: Bool) -> Bool {
+    print("iOS setIsCurrentlyActive: \(active)")
     if self.isFullscreen {
       return false
     }
