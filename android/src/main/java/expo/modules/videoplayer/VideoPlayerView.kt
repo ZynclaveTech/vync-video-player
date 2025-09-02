@@ -33,8 +33,8 @@ class VideoPlayerView(
 ) : ExpoView(context, appContext) {
     private var playerScope: CoroutineScope? = null
 
-    private val playerView: PlayerView
-    private val thumbnailImageView: ImageView
+    private lateinit var playerView: PlayerView
+    private lateinit var thumbnailImageView: ImageView
     var player: ExoPlayer? = null
 
     private var progressTracker: ProgressTracker? = null
@@ -127,17 +127,16 @@ class VideoPlayerView(
     private var enteredFullscreenMuteState = true
 
     init {
-        val playerView =
-            PlayerView(context).apply {
-                setBackgroundColor(Color.BLACK)
-                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                useController = false
-                setOnClickListener { _ ->
-                    onPlayerPress(mapOf())
-                }
+        this.playerView = PlayerView(context).apply {
+            setBackgroundColor(Color.BLACK)
+            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            useController = false
+            setOnClickListener { _ ->
+                onPlayerPress(mapOf())
             }
+        }
         
-        val thumbnailImageView = ImageView(context).apply {
+        this.thumbnailImageView = ImageView(context).apply {
             scaleType = ImageView.ScaleType.CENTER_CROP
             setBackgroundColor(Color.RED) // Changed to RED for testing
             visibility = android.view.View.VISIBLE // Always visible for testing
@@ -187,8 +186,7 @@ class VideoPlayerView(
         thumbnailImageView.isClickable = true
         thumbnailImageView.isFocusable = true
         
-        this.playerView = playerView
-        this.thumbnailImageView = thumbnailImageView
+        // Views are already assigned above
         
         // Initial thumbnail visibility check
         this.post {
