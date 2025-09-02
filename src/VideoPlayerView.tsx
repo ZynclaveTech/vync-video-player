@@ -1,6 +1,6 @@
 import {requireNativeViewManager} from 'expo-modules-core'
 import * as React from 'react'
-import {StyleProp, ViewStyle, Image, View, ImageStyle} from 'react-native'
+import {StyleProp, ViewStyle} from 'react-native'
 
 import {VideoPlayerViewProps} from './VideoPlayer.types'
 
@@ -13,10 +13,6 @@ const NativeView: React.ComponentType<
 
 export class VideoPlayerView extends React.Component<VideoPlayerViewProps> {
   ref: React.RefObject<any> = React.createRef()
-  state = {
-    isLoading: true,
-    isActive: false
-  }
 
   togglePlayback = () => {
     this.ref.current?.togglePlayback()
@@ -30,79 +26,13 @@ export class VideoPlayerView extends React.Component<VideoPlayerViewProps> {
     this.ref.current?.enterFullscreen(keepDisplayOn ?? false)
   }
 
-  onLoadingChange = (e: any) => {
-    const isLoading = e.nativeEvent.isLoading
-    console.log('VideoPlayerView onLoadingChange:', isLoading)
-    this.setState({ isLoading })
-  }
-
-  onActiveChange = (e: any) => {
-    const isActive = e.nativeEvent.isActive
-    console.log('VideoPlayerView onActiveChange:', isActive)
-    this.setState({ isActive })
-  }
-
-  shouldShowThumbnail = () => {
-    const { showThumbnailWhileLoading, showThumbnailWhenInactive } = this.props
-    const { isLoading, isActive } = this.state
-    
-    const shouldShow = (
-      (isLoading && showThumbnailWhileLoading) ||
-      (!isActive && showThumbnailWhenInactive)
-    )
-    
-    console.log('shouldShowThumbnail:', {
-      isLoading,
-      isActive,
-      showThumbnailWhileLoading,
-      showThumbnailWhenInactive,
-      shouldShow
-    })
-    
-    return shouldShow
-  }
-
-  renderThumbnail() {
-    const { thumbnailUrl, thumbnailStyle, style } = this.props
-
-    if (!this.shouldShowThumbnail() || !thumbnailUrl) {
-      return null
-    }
-
-    return (
-      <Image
-        source={{ uri: thumbnailUrl }}
-        style={[
-          {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            resizeMode: 'cover',
-            zIndex: 1
-          },
-          thumbnailStyle,
-          style as StyleProp<ImageStyle>
-        ]}
-      />
-    )
-  }
-
   render() {
-    const { thumbnailUrl, showThumbnailWhileLoading, showThumbnailWhenInactive, thumbnailStyle, ...props } = this.props
-
     return (
-      <View style={[{ flex: 1 }, this.props.style]}>
-        {this.renderThumbnail()}
-        <NativeView
-          {...props}
-          style={[{ flex: 1 }, this.props.style]}
-          ref={this.ref}
-          onLoadingChange={this.onLoadingChange}
-          onActiveChange={this.onActiveChange}
-        />
-      </View>
+      <NativeView
+        {...this.props}
+        style={[this.props.style, {flex: 1}]}
+        ref={this.ref}
+      />
     )
   }
 }

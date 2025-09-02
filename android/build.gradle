@@ -62,6 +62,9 @@ dependencies {
   def fragment_version = "1.6.2"
   implementation "androidx.fragment:fragment:$fragment_version"
   implementation "androidx.fragment:fragment-ktx:$fragment_version"
+  
+  // Glide for image loading
+  implementation 'com.github.bumptech.glide:glide:4.16.0'
 }
 
 

@@ -1,10 +1,12 @@
 import AVFoundation
 import ExpoModulesCore
+import UIKit
 
 class VideoView: ExpoView, AVPlayerViewControllerDelegate {
   private var pViewController: AVPlayerViewController?
   private var player: AVPlayer?
   private var periodicTimeObserver: Any?
+  private var thumbnailImageView: UIImageView?
 
   // props
   var autoplay: Bool = true
@@ -36,6 +38,7 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       self.onLoadingChange([
         "isLoading": isLoading
       ])
+      self.updateThumbnailVisibility()
     }
   }
 
@@ -59,6 +62,7 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       self.onActiveChange([
         "isActive": isViewActive
       ])
+      self.updateThumbnailVisibility()
     }
   }
 
@@ -106,6 +110,7 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     self.pViewController = AVPlayerViewController()
     super.init(appContext: appContext)
     self.clipsToBounds = true
+    self.setupThumbnailImageView()
   }
 
   // MARK: - lifecycle
@@ -210,6 +215,60 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       ViewManager.shared.remove(self)
       self.destroy()
     }
+  }
+
+  // MARK: - thumbnail support
+
+  private func setupThumbnailImageView() {
+    let imageView = UIImageView()
+    imageView.contentMode = .scaleAspectFill
+    imageView.clipsToBounds = true
+    imageView.backgroundColor = .black
+    imageView.isHidden = true
+    self.addSubview(imageView)
+    self.thumbnailImageView = imageView
+    
+    // Set up constraints
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      imageView.topAnchor.constraint(equalTo: self.topAnchor),
+      imageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+      imageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+      imageView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+    ])
+  }
+
+  private func updateThumbnailVisibility() {
+    guard let thumbnailImageView = self.thumbnailImageView else { return }
+    
+    let shouldShowThumbnail = (
+      (self.isLoading && self.showThumbnailWhileLoading) ||
+      (!self.isViewActive && self.showThumbnailWhenInactive)
+    )
+    
+    if shouldShowThumbnail && self.thumbnailUrl != nil {
+      self.loadThumbnailImage()
+      thumbnailImageView.isHidden = false
+    } else {
+      thumbnailImageView.isHidden = true
+    }
+  }
+
+  private func loadThumbnailImage() {
+    guard let thumbnailUrl = self.thumbnailUrl,
+          let url = URL(string: thumbnailUrl),
+          let thumbnailImageView = self.thumbnailImageView else { return }
+    
+    // Load image asynchronously
+    URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+      guard let self = self,
+            let data = data,
+            let image = UIImage(data: data) else { return }
+      
+      DispatchQueue.main.async {
+        thumbnailImageView.image = image
+      }
+    }.resume()
   }
 
   // MARK: - observers

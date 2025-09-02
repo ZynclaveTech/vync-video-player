@@ -6,12 +6,14 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.net.Uri
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.bumptech.glide.Glide
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ExpoView
@@ -32,6 +34,7 @@ class VideoPlayerView(
     private var playerScope: CoroutineScope? = null
 
     private val playerView: PlayerView
+    private val thumbnailImageView: ImageView
     var player: ExoPlayer? = null
 
     private var progressTracker: ProgressTracker? = null
@@ -86,6 +89,7 @@ class VideoPlayerView(
                     "isLoading" to value,
                 ),
             )
+            updateThumbnailVisibility()
         }
 
     private var isViewActive: Boolean = false
@@ -96,6 +100,7 @@ class VideoPlayerView(
                     "isActive" to value,
                 ),
             )
+            updateThumbnailVisibility()
         }
 
     var forceTakeover: Boolean = false
@@ -131,6 +136,13 @@ class VideoPlayerView(
                     onPlayerPress(mapOf())
                 }
             }
+        
+        val thumbnailImageView = ImageView(context).apply {
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            setBackgroundColor(Color.BLACK)
+            visibility = android.view.View.GONE
+        }
+        
         this.addView(
             playerView,
             ViewGroup.LayoutParams(
@@ -138,7 +150,17 @@ class VideoPlayerView(
                 ViewGroup.LayoutParams.MATCH_PARENT,
             ),
         )
+        
+        this.addView(
+            thumbnailImageView,
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            ),
+        )
+        
         this.playerView = playerView
+        this.thumbnailImageView = thumbnailImageView
     }
 
     // Lifecycle
@@ -189,6 +211,30 @@ class VideoPlayerView(
         super.onDetachedFromWindow()
         ViewManager.removeView(this)
         this.destroy()
+    }
+
+    // Thumbnail support
+
+    private fun updateThumbnailVisibility() {
+        val shouldShowThumbnail = (
+            (this.isLoading && this.showThumbnailWhileLoading) ||
+            (!this.isViewActive && this.showThumbnailWhenInactive)
+        )
+        
+        if (shouldShowThumbnail && this.thumbnailUrl != null) {
+            this.loadThumbnailImage()
+            this.thumbnailImageView.visibility = android.view.View.VISIBLE
+        } else {
+            this.thumbnailImageView.visibility = android.view.View.GONE
+        }
+    }
+
+    private fun loadThumbnailImage() {
+        val thumbnailUrl = this.thumbnailUrl ?: return
+        
+        Glide.with(this.context)
+            .load(thumbnailUrl)
+            .into(this.thumbnailImageView)
     }
 
     // Controls
