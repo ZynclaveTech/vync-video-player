@@ -22,17 +22,14 @@ class ViewManager: Manager<VideoView> {
   }
 
   func updateActiveView() {
-    print("iOS ViewManager: updateActiveView called, count=\(self.count())")
     DispatchQueue.main.async {
       var activeView: VideoView?
 
       if self.count() == 1 {
         // get the first one
         guard let view = self.getEnumerator()?.nextObject() as? VideoView else {
-          print("iOS ViewManager: No view found")
           return
         }
-        print("iOS ViewManager: Single view found, isViewableEnough=\(view.isViewableEnough())")
         if view.isViewableEnough() {
           activeView = view
         }
@@ -93,14 +90,12 @@ class ViewManager: Manager<VideoView> {
   }
 
   func setActiveView(_ view: VideoView) {
-    print("iOS ViewManager: setActiveView called")
     if self.currentlyActiveView != nil {
       self.clearActiveView()
     }
     let didUpdate = view.setIsCurrentlyActive(active: true)
     if didUpdate {
       self.currentlyActiveView = view
-      print("iOS ViewManager: View set as active")
     }
   }
 }

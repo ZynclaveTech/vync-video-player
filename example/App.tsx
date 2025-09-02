@@ -143,14 +143,14 @@ function Player({
           console.log('error', e.nativeEvent.error)
         }}
         onStatusChange={e => {
-          console.log('▶️ Status changed:', e.nativeEvent.status)
+          console.log('status', e.nativeEvent.status)
         }}
         onActiveChange={e => {
-          console.log('👁️ Active state changed:', e.nativeEvent.isActive)
+          console.log('active', e.nativeEvent.isActive)
           setActive(e.nativeEvent.isActive)
         }}
         onLoadingChange={e => {
-          console.log('🔄 Loading state changed:', e.nativeEvent.isLoading)
+          console.log('loading', e.nativeEvent.isLoading)
         }}
         onTimeRemainingChange={e => {
           console.log('timeRemaining', e.nativeEvent.timeRemaining)
