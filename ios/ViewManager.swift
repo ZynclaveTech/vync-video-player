@@ -54,7 +54,7 @@ class ViewManager: Manager<VideoView> {
           let visibilityPercentage = view.calculateVisibilityPercentage()
 
           // Only consider videos that meet the minimum visibility threshold
-          if visibilityPercentage >= 0.5 {
+          if visibilityPercentage >= 0.3 {
             // Pick the most visible video, or if tied, the topmost one
             if visibilityPercentage > highestVisibilityPercentage
               || (visibilityPercentage == highestVisibilityPercentage

@@ -497,7 +497,7 @@ extension UIView {
   }
 
   func isViewableEnough() -> Bool {
-    return calculateVisibilityPercentage() >= 0.5
+    return calculateVisibilityPercentage() >= 0.3
   }
 
   func calculateVisibilityPercentage() -> CGFloat {
