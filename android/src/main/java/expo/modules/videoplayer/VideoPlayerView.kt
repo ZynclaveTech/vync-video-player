@@ -236,12 +236,13 @@ class VideoPlayerView(
         ))
         
         if (shouldShowThumbnail && this.thumbnailUrl != null) {
+            println("Android: About to show thumbnail")
             this.loadThumbnailImage()
             this.thumbnailImageView.visibility = android.view.View.VISIBLE
-            println("Android: Showing thumbnail")
+            println("Android: Showing thumbnail - visibility set to VISIBLE")
         } else {
             this.thumbnailImageView.visibility = android.view.View.GONE
-            println("Android: Hiding thumbnail")
+            println("Android: Hiding thumbnail - visibility set to GONE")
         }
     }
 
@@ -250,9 +251,14 @@ class VideoPlayerView(
         
         println("Android: Loading thumbnail from URL: $thumbnailUrl")
         
-        Glide.with(this.context)
-            .load(thumbnailUrl)
-            .into(this.thumbnailImageView)
+        try {
+            Glide.with(this.context)
+                .load(thumbnailUrl)
+                .into(this.thumbnailImageView)
+            println("Android: Glide load request sent successfully")
+        } catch (e: Exception) {
+            println("Android: Error loading thumbnail with Glide: ${e.message}")
+        }
     }
 
     // Controls
