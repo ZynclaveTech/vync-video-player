@@ -5,13 +5,13 @@ export declare class VideoPlayerView extends React.Component<VideoPlayerViewProp
     state: {
         isLoading: boolean;
         isActive: boolean;
-        showThumbnail: boolean;
     };
     togglePlayback: () => void;
     toggleMuted: () => void;
     enterFullscreen: (keepDisplayOn?: boolean) => void;
     onLoadingChange: (e: any) => void;
     onActiveChange: (e: any) => void;
+    shouldShowThumbnail: () => boolean | undefined;
     renderThumbnail(): React.JSX.Element | null;
     render(): React.JSX.Element;
 }

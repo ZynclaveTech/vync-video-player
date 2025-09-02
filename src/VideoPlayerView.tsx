@@ -15,8 +15,7 @@ export class VideoPlayerView extends React.Component<VideoPlayerViewProps> {
   ref: React.RefObject<any> = React.createRef()
   state = {
     isLoading: true,
-    isActive: false,
-    showThumbnail: false
+    isActive: false
   }
 
   togglePlayback = () => {
@@ -33,25 +32,40 @@ export class VideoPlayerView extends React.Component<VideoPlayerViewProps> {
 
   onLoadingChange = (e: any) => {
     const isLoading = e.nativeEvent.isLoading
-    this.setState({ 
-      isLoading,
-      showThumbnail: isLoading && this.props.showThumbnailWhileLoading
-    })
+    console.log('VideoPlayerView onLoadingChange:', isLoading)
+    this.setState({ isLoading })
   }
 
   onActiveChange = (e: any) => {
     const isActive = e.nativeEvent.isActive
-    this.setState({ 
+    console.log('VideoPlayerView onActiveChange:', isActive)
+    this.setState({ isActive })
+  }
+
+  shouldShowThumbnail = () => {
+    const { showThumbnailWhileLoading, showThumbnailWhenInactive } = this.props
+    const { isLoading, isActive } = this.state
+    
+    const shouldShow = (
+      (isLoading && showThumbnailWhileLoading) ||
+      (!isActive && showThumbnailWhenInactive)
+    )
+    
+    console.log('shouldShowThumbnail:', {
+      isLoading,
       isActive,
-      showThumbnail: !isActive && this.props.showThumbnailWhenInactive
+      showThumbnailWhileLoading,
+      showThumbnailWhenInactive,
+      shouldShow
     })
+    
+    return shouldShow
   }
 
   renderThumbnail() {
     const { thumbnailUrl, thumbnailStyle, style } = this.props
-    const { showThumbnail } = this.state
 
-    if (!showThumbnail || !thumbnailUrl) {
+    if (!this.shouldShowThumbnail() || !thumbnailUrl) {
       return null
     }
 

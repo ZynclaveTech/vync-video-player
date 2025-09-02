@@ -114,7 +114,7 @@ function Player({
   }
 
   // Generate a sample thumbnail URL (you can replace this with actual thumbnail URLs)
-  const thumbnailUrl = `https://picsum.photos/400/300?random=${num}`
+  const thumbnailUrl = `https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=patrick-perkins-3wylDrjxH-E-unsplash.jpg&w=640`
 
   return (
     <Pressable
@@ -125,6 +125,11 @@ function Player({
       }}
       onPress={Platform.OS === 'ios' ? onPress : undefined}>
       <Text>Video: {num}</Text>
+      <Text style={{ fontSize: 12, color: 'blue' }}>
+        Thumbnail: {thumbnailUrl ? 'Set' : 'Not Set'} | 
+        Show While Loading: {true} | 
+        Show When Inactive: {true}
+      </Text>
       <VideoPlayerView
         beginMuted={false}
         url={url}
