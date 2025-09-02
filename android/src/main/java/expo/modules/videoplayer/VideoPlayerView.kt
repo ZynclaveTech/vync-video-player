@@ -242,8 +242,6 @@ class VideoPlayerView(
             (!this.isViewActive && this.showThumbnailWhenInactive)
         )
         
-
-        
         if (shouldShowThumbnail && this.thumbnailUrl != null) {
             this.loadThumbnailImage()
             this.thumbnailImageView.visibility = android.view.View.VISIBLE

@@ -152,6 +152,18 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
 
     pViewController.player = player
     self.addSubview(pViewController.view)
+    
+    // Add thumbnail to the player view controller
+    if let thumbnailImageView = self.thumbnailImageView {
+      pViewController.view.addSubview(thumbnailImageView)
+      thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
+      NSLayoutConstraint.activate([
+        thumbnailImageView.topAnchor.constraint(equalTo: pViewController.view.topAnchor),
+        thumbnailImageView.leadingAnchor.constraint(equalTo: pViewController.view.leadingAnchor),
+        thumbnailImageView.trailingAnchor.constraint(equalTo: pViewController.view.trailingAnchor),
+        thumbnailImageView.bottomAnchor.constraint(equalTo: pViewController.view.bottomAnchor)
+      ])
+    }
 
     self.pViewController = pViewController
     self.player = player
@@ -229,17 +241,7 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     imageView.clipsToBounds = true
     imageView.backgroundColor = .black
     imageView.isHidden = true
-    self.addSubview(imageView)
     self.thumbnailImageView = imageView
-    
-    // Set up constraints
-    imageView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      imageView.topAnchor.constraint(equalTo: self.topAnchor),
-      imageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-      imageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-      imageView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
-    ])
   }
 
   private func updateThumbnailVisibility() {
@@ -250,22 +252,11 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       (!self.isViewActive && self.showThumbnailWhenInactive)
     )
     
-    print("iOS updateThumbnailVisibility:", [
-      "isLoading": self.isLoading,
-      "isViewActive": self.isViewActive,
-      "showThumbnailWhileLoading": self.showThumbnailWhileLoading,
-      "showThumbnailWhenInactive": self.showThumbnailWhenInactive,
-      "thumbnailUrl": self.thumbnailUrl ?? "nil",
-      "shouldShowThumbnail": shouldShowThumbnail
-    ])
-    
     if shouldShowThumbnail && self.thumbnailUrl != nil {
       self.loadThumbnailImage()
       thumbnailImageView.isHidden = false
-      print("iOS: Showing thumbnail")
     } else {
       thumbnailImageView.isHidden = true
-      print("iOS: Hiding thumbnail")
     }
   }
 
@@ -273,27 +264,27 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     guard let thumbnailUrl = self.thumbnailUrl,
           let url = URL(string: thumbnailUrl),
           let thumbnailImageView = self.thumbnailImageView else { 
-      print("iOS: Failed to load thumbnail - missing URL or imageView")
+
       return 
     }
     
-    print("iOS: Loading thumbnail from URL: \(thumbnailUrl)")
+
     
     // Load image asynchronously
     URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
       if let error = error {
-        print("iOS: Error loading thumbnail: \(error)")
+
         return
       }
       
       guard let self = self,
             let data = data,
             let image = UIImage(data: data) else { 
-        print("iOS: Failed to create image from data")
+
         return 
       }
       
-      print("iOS: Successfully loaded thumbnail image")
+
       DispatchQueue.main.async {
         thumbnailImageView.image = image
       }
