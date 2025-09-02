@@ -155,8 +155,11 @@ class VideoPlayerView(
             elevation = 200f
         }
         
-        // Add player view first (bottom layer)
-        this.addView(
+        // Create a FrameLayout to hold both views
+        val container = android.widget.FrameLayout(context)
+        
+        // Add player view to container
+        container.addView(
             playerView,
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -164,8 +167,8 @@ class VideoPlayerView(
             ),
         )
         
-        // Add thumbnail view to the parent view
-        this.addView(
+        // Add thumbnail view to container
+        container.addView(
             thumbnailImageView,
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -173,12 +176,21 @@ class VideoPlayerView(
             ),
         )
         
-        // Add test TextView to the parent view
-        this.addView(
+        // Add test TextView to container
+        container.addView(
             testTextView,
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
+            ),
+        )
+        
+        // Add container to this view
+        this.addView(
+            container,
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
             ),
         )
         
@@ -264,8 +276,8 @@ class VideoPlayerView(
         println("Android: Checking conditions - shouldShowThumbnail: $shouldShowThumbnail, thumbnailUrl: ${this.thumbnailUrl}")
         
         // Check if thumbnailImageView is properly initialized
-        if (this.thumbnailImageView == null) {
-            println("Android: ERROR - thumbnailImageView is null!")
+        if (!::thumbnailImageView.isInitialized) {
+            println("Android: ERROR - thumbnailImageView is not initialized!")
             return
         }
         
