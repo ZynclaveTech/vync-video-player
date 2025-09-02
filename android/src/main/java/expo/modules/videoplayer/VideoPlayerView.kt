@@ -146,6 +146,16 @@ class VideoPlayerView(
             alpha = 0.8f // Make it semi-transparent so we can see it
         }
         
+        // Add a simple TextView for testing
+        val testTextView = android.widget.TextView(context).apply {
+            text = "THUMBNAIL TEST"
+            setBackgroundColor(Color.YELLOW)
+            setTextColor(Color.BLACK)
+            textSize = 20f
+            visibility = android.view.View.VISIBLE
+            elevation = 200f
+        }
+        
         // Add player view first (bottom layer)
         this.addView(
             playerView,
@@ -155,7 +165,7 @@ class VideoPlayerView(
             ),
         )
         
-        // Add thumbnail view second (top layer) with higher index
+        // Add thumbnail view to the parent view
         this.addView(
             thumbnailImageView,
             ViewGroup.LayoutParams(
@@ -164,12 +174,14 @@ class VideoPlayerView(
             ),
         )
         
-        // Force thumbnail to be on top by removing and re-adding
-        this.removeView(thumbnailImageView)
-        this.addView(thumbnailImageView, ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-        ))
+        // Add test TextView to the parent view
+        this.addView(
+            testTextView,
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            ),
+        )
         
         // Make thumbnail view clickable and focusable
         thumbnailImageView.isClickable = true
