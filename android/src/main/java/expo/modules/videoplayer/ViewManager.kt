@@ -64,5 +64,5 @@ fun VideoPlayerView.calculateVisibilityPercentage(): Double {
 }
 
 fun VideoPlayerView.isViewableEnough(): Boolean {
-    return calculateVisibilityPercentage() >= 0.5
+    return calculateVisibilityPercentage() >= 0.3 // Reduced from 0.5 to 0.3 (30% visibility)
 }

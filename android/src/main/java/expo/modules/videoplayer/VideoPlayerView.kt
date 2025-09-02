@@ -141,6 +141,8 @@ class VideoPlayerView(
             scaleType = ImageView.ScaleType.CENTER_CROP
             setBackgroundColor(Color.RED) // Changed to RED for testing
             visibility = android.view.View.VISIBLE // Always visible for testing
+            elevation = 10f // Make it float above everything
+            setImageResource(android.R.drawable.ic_media_play) // Add a play icon
         }
         
         // Add player view first (bottom layer)
@@ -401,12 +403,29 @@ class VideoPlayerView(
 
         val screenPosition = intArrayOf(0, 0)
         this.getLocationInWindow(screenPosition)
-        return Rect(
+        
+        // Get the actual screen bounds
+        val displayMetrics = this.context.resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+        
+        // Calculate the intersection with the screen
+        val viewRect = Rect(
             screenPosition[0],
             screenPosition[1],
             screenPosition[0] + this.width,
             screenPosition[1] + this.height,
         )
+        
+        val screenRect = Rect(0, 0, screenWidth, screenHeight)
+        
+        // Return the intersection of view and screen
+        val intersection = Rect()
+        if (intersection.setIntersect(viewRect, screenRect)) {
+            return intersection
+        }
+        
+        return null
     }
 
     fun isViewableEnough(): Boolean {
