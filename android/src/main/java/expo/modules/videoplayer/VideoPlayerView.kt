@@ -139,10 +139,11 @@ class VideoPlayerView(
         
         val thumbnailImageView = ImageView(context).apply {
             scaleType = ImageView.ScaleType.CENTER_CROP
-            setBackgroundColor(Color.BLACK)
+            setBackgroundColor(Color.RED) // Changed to RED for testing
             visibility = android.view.View.GONE
         }
         
+        // Add player view first (bottom layer)
         this.addView(
             playerView,
             ViewGroup.LayoutParams(
@@ -151,6 +152,7 @@ class VideoPlayerView(
             ),
         )
         
+        // Add thumbnail view second (top layer)
         this.addView(
             thumbnailImageView,
             ViewGroup.LayoutParams(
@@ -158,6 +160,9 @@ class VideoPlayerView(
                 ViewGroup.LayoutParams.MATCH_PARENT,
             ),
         )
+        
+        // Ensure thumbnail is on top
+        thumbnailImageView.bringToFront()
         
         this.playerView = playerView
         this.thumbnailImageView = thumbnailImageView
