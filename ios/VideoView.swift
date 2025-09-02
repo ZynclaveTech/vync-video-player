@@ -111,6 +111,10 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     super.init(appContext: appContext)
     self.clipsToBounds = true
     self.setupThumbnailImageView()
+    // Initial thumbnail visibility check
+    DispatchQueue.main.async {
+      self.updateThumbnailVisibility()
+    }
   }
 
   // MARK: - lifecycle
@@ -246,25 +250,50 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       (!self.isViewActive && self.showThumbnailWhenInactive)
     )
     
+    print("iOS updateThumbnailVisibility:", [
+      "isLoading": self.isLoading,
+      "isViewActive": self.isViewActive,
+      "showThumbnailWhileLoading": self.showThumbnailWhileLoading,
+      "showThumbnailWhenInactive": self.showThumbnailWhenInactive,
+      "thumbnailUrl": self.thumbnailUrl ?? "nil",
+      "shouldShowThumbnail": shouldShowThumbnail
+    ])
+    
     if shouldShowThumbnail && self.thumbnailUrl != nil {
       self.loadThumbnailImage()
       thumbnailImageView.isHidden = false
+      print("iOS: Showing thumbnail")
     } else {
       thumbnailImageView.isHidden = true
+      print("iOS: Hiding thumbnail")
     }
   }
 
   private func loadThumbnailImage() {
     guard let thumbnailUrl = self.thumbnailUrl,
           let url = URL(string: thumbnailUrl),
-          let thumbnailImageView = self.thumbnailImageView else { return }
+          let thumbnailImageView = self.thumbnailImageView else { 
+      print("iOS: Failed to load thumbnail - missing URL or imageView")
+      return 
+    }
+    
+    print("iOS: Loading thumbnail from URL: \(thumbnailUrl)")
     
     // Load image asynchronously
     URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+      if let error = error {
+        print("iOS: Error loading thumbnail: \(error)")
+        return
+      }
+      
       guard let self = self,
             let data = data,
-            let image = UIImage(data: data) else { return }
+            let image = UIImage(data: data) else { 
+        print("iOS: Failed to create image from data")
+        return 
+      }
       
+      print("iOS: Successfully loaded thumbnail image")
       DispatchQueue.main.async {
         thumbnailImageView.image = image
       }

@@ -5,6 +5,9 @@ module.exports = async (env, argv) => {
   const config = await createConfigAsync(
     {
       ...env,
+      babel: {
+        dangerouslyAddModulePathsToTranspile: ['vync-video-player'],
+      },
     },
     argv
   );

@@ -18,6 +18,10 @@ config.resolver.nodeModulesPaths = [
   path.resolve(__dirname, '../node_modules'),
 ];
 
+config.resolver.extraNodeModules = {
+  'vync-video-player': '..',
+};
+
 config.watchFolders = [path.resolve(__dirname, '..')];
 
 config.transformer.getTransformOptions = async () => ({

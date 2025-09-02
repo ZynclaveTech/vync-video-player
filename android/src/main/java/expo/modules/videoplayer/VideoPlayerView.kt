@@ -161,6 +161,11 @@ class VideoPlayerView(
         
         this.playerView = playerView
         this.thumbnailImageView = thumbnailImageView
+        
+        // Initial thumbnail visibility check
+        this.post {
+            this.updateThumbnailVisibility()
+        }
     }
 
     // Lifecycle
@@ -221,16 +226,29 @@ class VideoPlayerView(
             (!this.isViewActive && this.showThumbnailWhenInactive)
         )
         
+        println("Android updateThumbnailVisibility: " + mapOf(
+            "isLoading" to this.isLoading,
+            "isViewActive" to this.isViewActive,
+            "showThumbnailWhileLoading" to this.showThumbnailWhileLoading,
+            "showThumbnailWhenInactive" to this.showThumbnailWhenInactive,
+            "thumbnailUrl" to (this.thumbnailUrl ?: "null"),
+            "shouldShowThumbnail" to shouldShowThumbnail
+        ))
+        
         if (shouldShowThumbnail && this.thumbnailUrl != null) {
             this.loadThumbnailImage()
             this.thumbnailImageView.visibility = android.view.View.VISIBLE
+            println("Android: Showing thumbnail")
         } else {
             this.thumbnailImageView.visibility = android.view.View.GONE
+            println("Android: Hiding thumbnail")
         }
     }
 
     private fun loadThumbnailImage() {
         val thumbnailUrl = this.thumbnailUrl ?: return
+        
+        println("Android: Loading thumbnail from URL: $thumbnailUrl")
         
         Glide.with(this.context)
             .load(thumbnailUrl)
