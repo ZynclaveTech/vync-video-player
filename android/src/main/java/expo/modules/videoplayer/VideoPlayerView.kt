@@ -240,6 +240,20 @@ class VideoPlayerView(
             "shouldShowThumbnail" to shouldShowThumbnail
         ))
         
+        println("Android: Checking conditions - shouldShowThumbnail: $shouldShowThumbnail, thumbnailUrl: ${this.thumbnailUrl}")
+        
+        // TEMPORARY TEST: Force show thumbnail when shouldShowThumbnail is true
+        if (shouldShowThumbnail) {
+            println("Android: FORCE SHOWING thumbnail for testing")
+            this.thumbnailImageView.visibility = android.view.View.VISIBLE
+            println("Android: Thumbnail visibility set to VISIBLE")
+        } else {
+            this.thumbnailImageView.visibility = android.view.View.GONE
+            println("Android: Hiding thumbnail - visibility set to GONE")
+        }
+        
+        // Original logic (commented out for testing)
+        /*
         if (shouldShowThumbnail && this.thumbnailUrl != null) {
             println("Android: About to show thumbnail")
             this.loadThumbnailImage()
@@ -249,6 +263,7 @@ class VideoPlayerView(
             this.thumbnailImageView.visibility = android.view.View.GONE
             println("Android: Hiding thumbnail - visibility set to GONE")
         }
+        */
     }
 
     private fun loadThumbnailImage() {
