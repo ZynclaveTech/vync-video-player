@@ -138,21 +138,8 @@ class VideoPlayerView(
         
         this.thumbnailImageView = ImageView(context).apply {
             scaleType = ImageView.ScaleType.CENTER_CROP
-            setBackgroundColor(Color.RED) // Changed to RED for testing
-            visibility = android.view.View.VISIBLE // Always visible for testing
-            elevation = 100f // Make it float above everything
-            setImageResource(android.R.drawable.ic_media_play) // Add a play icon
-            alpha = 0.8f // Make it semi-transparent so we can see it
-        }
-        
-        // Add a simple TextView for testing
-        val testTextView = android.widget.TextView(context).apply {
-            text = "THUMBNAIL TEST"
-            setBackgroundColor(Color.YELLOW)
-            setTextColor(Color.BLACK)
-            textSize = 20f
-            visibility = android.view.View.VISIBLE
-            elevation = 200f
+            setBackgroundColor(Color.BLACK)
+            visibility = android.view.View.GONE
         }
         
         // Create a FrameLayout to hold both views
@@ -176,14 +163,7 @@ class VideoPlayerView(
             ),
         )
         
-        // Add test TextView to container
-        container.addView(
-            testTextView,
-            ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-            ),
-        )
+
         
         // Add container to this view
         this.addView(
@@ -194,9 +174,7 @@ class VideoPlayerView(
             ),
         )
         
-        // Make thumbnail view clickable and focusable
-        thumbnailImageView.isClickable = true
-        thumbnailImageView.isFocusable = true
+
         
         // Views are already assigned above
         
@@ -264,59 +242,22 @@ class VideoPlayerView(
             (!this.isViewActive && this.showThumbnailWhenInactive)
         )
         
-        println("Android updateThumbnailVisibility: " + mapOf(
-            "isLoading" to this.isLoading,
-            "isViewActive" to this.isViewActive,
-            "showThumbnailWhileLoading" to this.showThumbnailWhileLoading,
-            "showThumbnailWhenInactive" to this.showThumbnailWhenInactive,
-            "thumbnailUrl" to (this.thumbnailUrl ?: "null"),
-            "shouldShowThumbnail" to shouldShowThumbnail
-        ))
+
         
-        println("Android: Checking conditions - shouldShowThumbnail: $shouldShowThumbnail, thumbnailUrl: ${this.thumbnailUrl}")
-        
-        // Check if thumbnailImageView is properly initialized
-        if (!::thumbnailImageView.isInitialized) {
-            println("Android: ERROR - thumbnailImageView is not initialized!")
-            return
-        }
-        
-        if (shouldShowThumbnail) {
-            println("Android: FORCE SHOWING thumbnail for testing")
-            this.thumbnailImageView.visibility = android.view.View.VISIBLE
-            println("Android: Thumbnail visibility set to VISIBLE")
-        } else {
-            this.thumbnailImageView.visibility = android.view.View.GONE
-            println("Android: Hiding thumbnail - visibility set to GONE")
-        }
-        
-        // Original logic (commented out for testing)
-        /*
         if (shouldShowThumbnail && this.thumbnailUrl != null) {
-            println("Android: About to show thumbnail")
             this.loadThumbnailImage()
             this.thumbnailImageView.visibility = android.view.View.VISIBLE
-            println("Android: Showing thumbnail - visibility set to VISIBLE")
         } else {
             this.thumbnailImageView.visibility = android.view.View.GONE
-            println("Android: Hiding thumbnail - visibility set to GONE")
         }
-        */
     }
 
     private fun loadThumbnailImage() {
         val thumbnailUrl = this.thumbnailUrl ?: return
         
-        println("Android: Loading thumbnail from URL: $thumbnailUrl")
-        
-        try {
-            Glide.with(this.context)
-                .load(thumbnailUrl)
-                .into(this.thumbnailImageView)
-            println("Android: Glide load request sent successfully")
-        } catch (e: Exception) {
-            println("Android: Error loading thumbnail with Glide: ${e.message}")
-        }
+        Glide.with(this.context)
+            .load(thumbnailUrl)
+            .into(this.thumbnailImageView)
     }
 
     // Controls
