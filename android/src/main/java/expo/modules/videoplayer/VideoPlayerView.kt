@@ -141,8 +141,9 @@ class VideoPlayerView(
             scaleType = ImageView.ScaleType.CENTER_CROP
             setBackgroundColor(Color.RED) // Changed to RED for testing
             visibility = android.view.View.VISIBLE // Always visible for testing
-            elevation = 10f // Make it float above everything
+            elevation = 100f // Make it float above everything
             setImageResource(android.R.drawable.ic_media_play) // Add a play icon
+            alpha = 0.8f // Make it semi-transparent so we can see it
         }
         
         // Add player view first (bottom layer)
@@ -154,7 +155,7 @@ class VideoPlayerView(
             ),
         )
         
-        // Add thumbnail view second (top layer)
+        // Add thumbnail view second (top layer) with higher index
         this.addView(
             thumbnailImageView,
             ViewGroup.LayoutParams(
@@ -163,8 +164,16 @@ class VideoPlayerView(
             ),
         )
         
-        // Ensure thumbnail is on top
-        thumbnailImageView.bringToFront()
+        // Force thumbnail to be on top by removing and re-adding
+        this.removeView(thumbnailImageView)
+        this.addView(thumbnailImageView, ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+        ))
+        
+        // Make thumbnail view clickable and focusable
+        thumbnailImageView.isClickable = true
+        thumbnailImageView.isFocusable = true
         
         this.playerView = playerView
         this.thumbnailImageView = thumbnailImageView
