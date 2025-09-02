@@ -140,7 +140,7 @@ class VideoPlayerView(
         val thumbnailImageView = ImageView(context).apply {
             scaleType = ImageView.ScaleType.CENTER_CROP
             setBackgroundColor(Color.RED) // Changed to RED for testing
-            visibility = android.view.View.GONE
+            visibility = android.view.View.VISIBLE // Always visible for testing
         }
         
         // Add player view first (bottom layer)
@@ -242,7 +242,12 @@ class VideoPlayerView(
         
         println("Android: Checking conditions - shouldShowThumbnail: $shouldShowThumbnail, thumbnailUrl: ${this.thumbnailUrl}")
         
-        // TEMPORARY TEST: Force show thumbnail when shouldShowThumbnail is true
+        // Check if thumbnailImageView is properly initialized
+        if (this.thumbnailImageView == null) {
+            println("Android: ERROR - thumbnailImageView is null!")
+            return
+        }
+        
         if (shouldShowThumbnail) {
             println("Android: FORCE SHOWING thumbnail for testing")
             this.thumbnailImageView.visibility = android.view.View.VISIBLE
