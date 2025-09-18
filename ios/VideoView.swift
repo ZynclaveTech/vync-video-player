@@ -27,7 +27,10 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
   // Thumbnail support
   var thumbnailUrl: String?
   var showThumbnailWhileLoading: Bool = false
-  var showThumbnailWhenInactive: Bool = false
+  var showThumbnailWhenInactive: Bool = true
+  
+  // Memory management
+  private var isNearby: Bool = false
 
   // controls
   private var isLoading: Bool = false {
@@ -152,18 +155,6 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
 
     pViewController.player = player
     self.addSubview(pViewController.view)
-    
-    // Add thumbnail to the player view controller
-    if let thumbnailImageView = self.thumbnailImageView {
-      pViewController.view.addSubview(thumbnailImageView)
-      thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
-      NSLayoutConstraint.activate([
-        thumbnailImageView.topAnchor.constraint(equalTo: pViewController.view.topAnchor),
-        thumbnailImageView.leadingAnchor.constraint(equalTo: pViewController.view.leadingAnchor),
-        thumbnailImageView.trailingAnchor.constraint(equalTo: pViewController.view.trailingAnchor),
-        thumbnailImageView.bottomAnchor.constraint(equalTo: pViewController.view.bottomAnchor)
-      ])
-    }
 
     self.pViewController = pViewController
     self.player = player
@@ -215,6 +206,9 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     self.pViewController?.view.removeFromSuperview()
     self.pViewController?.removeFromParent()
     self.pViewController = nil
+    
+    // Keep thumbnail visible when video is paused
+    self.updateThumbnailVisibility()
   }
 
   override func didMoveToWindow() {
@@ -229,6 +223,7 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
 
     if newWindow == nil {
       ViewManager.shared.remove(self)
+      // Only destroy when view is actually being removed from window
       self.destroy()
     }
   }
@@ -241,6 +236,17 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     imageView.clipsToBounds = true
     imageView.backgroundColor = .black
     imageView.isHidden = true
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    self.addSubview(imageView)
+    
+    // Add constraints to fill the entire view
+    NSLayoutConstraint.activate([
+      imageView.topAnchor.constraint(equalTo: self.topAnchor),
+      imageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+      imageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+      imageView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+    ])
+    
     self.thumbnailImageView = imageView
   }
 
@@ -410,10 +416,17 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       if self.autoplay || self.forceTakeover {
         self.setup()
       }
+      self.play()
+    } else if self.isNearby {
+      self.pause()
     } else {
       self.destroy()
     }
     return true
+  }
+  
+  func setIsNearby(nearby: Bool) {
+    self.isNearby = nearby
   }
 
   // MARK: - controls

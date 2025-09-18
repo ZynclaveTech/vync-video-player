@@ -74,11 +74,40 @@ class ViewManager: Manager<VideoView> {
         return
       }
 
+      // Update nearby status for all views before clearing active view
+      self.updateNearbyStatus(activeView: activeView)
+      
       self.clearActiveView()
       if let view = activeView {
         self.setActiveView(view)
       }
     }
+  }
+  
+  private func updateNearbyStatus(activeView: VideoView?) {
+    guard let views = self.getEnumerator() else { return }
+    
+    views.forEach { view in
+      guard let view = view as? VideoView else { return }
+      
+      let isNearby = self.isViewNearby(view, activeView: activeView)
+      view.setIsNearby(nearby: isNearby)
+    }
+  }
+  
+  private func isViewNearby(_ view: VideoView, activeView: VideoView?) -> Bool {
+    guard let activeView = activeView,
+          let activePosition = activeView.getPositionOnScreen(),
+          let viewPosition = view.getPositionOnScreen() else {
+      return false
+    }
+    
+    // Consider a view "nearby" if it's within 2 screen heights of the active view
+    let screenHeight = UIScreen.main.bounds.height
+    let distanceThreshold = screenHeight * 2
+    
+    let verticalDistance = abs(activePosition.midY - viewPosition.midY)
+    return verticalDistance <= distanceThreshold
   }
 
 

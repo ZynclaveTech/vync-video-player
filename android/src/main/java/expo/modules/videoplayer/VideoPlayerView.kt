@@ -48,6 +48,9 @@ class VideoPlayerView(
     var thumbnailUrl: String? = null
     var showThumbnailWhileLoading: Boolean = false
     var showThumbnailWhenInactive: Boolean = false
+    
+    // Memory management
+    private var isNearby: Boolean = false
 
     var isFullscreen: Boolean = false
         private set(value) {
@@ -221,6 +224,9 @@ class VideoPlayerView(
         this.playerView.player = null
         this.playerScope?.cancel()
         this.playerScope = null
+        
+        // Keep thumbnail visible when video is paused
+        this.updateThumbnailVisibility()
     }
 
     override fun onAttachedToWindow() {
@@ -231,6 +237,7 @@ class VideoPlayerView(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         ViewManager.removeView(this)
+        // Only destroy when view is actually being removed from window
         this.destroy()
     }
 
@@ -358,10 +365,17 @@ class VideoPlayerView(
             if (this.autoplay || this.forceTakeover) {
                 this.setup()
             }
+            this.play()
+        } else if (this.isNearby) {
+            this.pause()
         } else {
             this.destroy()
         }
         return true
+    }
+    
+    fun setIsNearby(nearby: Boolean) {
+        this.isNearby = nearby
     }
 
     // Visibility

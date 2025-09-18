@@ -37,10 +37,34 @@ class ViewManager {
             }
 
             if (activeView != currentlyActiveView) {
+                // Update nearby status for all views before changing active view
+                updateNearbyStatus(activeView)
+                
                 currentlyActiveView?.setIsCurrentlyActive(false)
                 activeView?.setIsCurrentlyActive(true)
                 currentlyActiveView = activeView
             }
+        }
+        
+        private fun updateNearbyStatus(activeView: VideoPlayerView?) {
+            for (view in views) {
+                val isNearby = isViewNearby(view, activeView)
+                view.setIsNearby(isNearby)
+            }
+        }
+        
+        private fun isViewNearby(view: VideoPlayerView, activeView: VideoPlayerView?): Boolean {
+            if (activeView == null) return false
+            
+            val activePosition = activeView.getPositionOnScreen() ?: return false
+            val viewPosition = view.getPositionOnScreen() ?: return false
+            
+            // Consider a view "nearby" if it's within 2 screen heights of the active view
+            val screenHeight = view.context.resources.displayMetrics.heightPixels
+            val distanceThreshold = screenHeight * 2
+            
+            val verticalDistance = kotlin.math.abs(activePosition.centerY() - viewPosition.centerY())
+            return verticalDistance <= distanceThreshold
         }
 
         fun setActiveView(view: VideoPlayerView) {
