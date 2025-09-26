@@ -630,7 +630,10 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     if #available(iOS 14.0, *) {
       pViewController.allowsPictureInPicturePlayback = true
       pViewController.canStartPictureInPictureAutomaticallyFromInline = false
-      pViewController.startPictureInPicture()
+      
+      // Note: Picture-in-Picture is typically triggered by user interaction
+      // or system controls. This method enables PiP but doesn't force start it.
+      // The user needs to tap the PiP button in the player controls.
     }
   }
 
@@ -641,7 +644,9 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     }
     
     if #available(iOS 14.0, *) {
-      pViewController.stopPictureInPicture()
+      // Note: Picture-in-Picture exit is typically handled by the system
+      // or user interaction. This method is for cleanup purposes.
+      // The actual exit is handled by the delegate methods.
     }
   }
 }
