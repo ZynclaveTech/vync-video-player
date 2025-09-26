@@ -180,7 +180,10 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     // Get the player item and add it to the player
     DispatchQueue.global(qos: .background).async { [weak self] in
       let playerItem = AVPlayerItem(url: url)
-      playerItem.preferredForwardBufferDuration = 5
+      // Increase buffer duration for smoother playback
+      playerItem.preferredForwardBufferDuration = 30
+      // Enable automatic quality adjustment
+      playerItem.preferredPeakBitRate = 0
 
       DispatchQueue.main.async {
         self?.player?.replaceCurrentItem(with: playerItem)
@@ -567,13 +570,15 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     
     self.isInProximityMode = true
     
-    // Setup the player but don't start playing yet
-    if self.player == nil {
-      self.setup()
+    // Add a small delay to reduce simultaneous video preparations
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+      guard let self = self, self.isInProximityMode else { return }
+      
+      // Setup the player but don't start playing yet
+      if self.player == nil {
+        self.setup()
+      }
     }
-    
-    // Just prepare the player, don't start playing
-    // This ensures smooth transition when it becomes active
   }
   
   private func exitProximityMode() {

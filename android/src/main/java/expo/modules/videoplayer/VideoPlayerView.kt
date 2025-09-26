@@ -11,6 +11,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.bumptech.glide.Glide
@@ -346,13 +347,12 @@ class VideoPlayerView(
         
         this.isInProximityMode = true
         
-        // Setup the player but don't start playing yet
-        if (this.player == null) {
-            this.setup()
-        }
-        
-        // Just prepare the player, don't start playing
-        // This ensures smooth transition when it becomes active
+        // Add a small delay to reduce simultaneous video preparations
+        this.postDelayed({
+            if (this.isInProximityMode && this.player == null) {
+                this.setup()
+            }
+        }, 100) // 100ms delay
     }
     
     private fun exitProximityMode() {
@@ -572,6 +572,17 @@ class VideoPlayerView(
                 setLooper(context.mainLooper)
                 setSeekForwardIncrementMs(5000)
                 setSeekBackIncrementMs(5000)
+                // Performance optimizations
+                setLoadControl(
+                    DefaultLoadControl.Builder()
+                        .setBufferDurationsMs(
+                            50000, // Min buffer duration (50s)
+                            120000, // Max buffer duration (2min)
+                            2500, // Buffer for playback (2.5s)
+                            5000 // Buffer for playback after rebuffer (5s)
+                        )
+                        .build()
+                )
             }.build()
             .apply {
                 repeatMode = ExoPlayer.REPEAT_MODE_ALL
