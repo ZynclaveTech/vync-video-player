@@ -5,5 +5,11 @@
 
     <application>
         <activity android:name=".FullscreenActivity" />
+        <activity
+            android:name=".PictureInPictureActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:supportsPictureInPicture="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation" />
     </application>
 </manifest>

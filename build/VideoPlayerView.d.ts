@@ -5,6 +5,8 @@ export declare class VideoPlayerView extends React.Component<VideoPlayerViewProp
     togglePlayback: () => void;
     toggleMuted: () => void;
     enterFullscreen: (keepDisplayOn?: boolean) => void;
+    enterPictureInPicture: () => void;
+    exitPictureInPicture: () => void;
     render(): React.JSX.Element;
 }
 //# sourceMappingURL=VideoPlayerView.d.ts.map

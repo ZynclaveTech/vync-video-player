@@ -1,9 +1,12 @@
 {
   "platforms": ["ios", "tvos", "android", "web"],
   "ios": {
-    "modules": ["VideoPlayerModule"]
+    "modules": ["VideoPlayerModule"],
+    "infoPlist": {
+      "UIBackgroundModes": ["audio"]
+    }
   },
   "android": {
-    "modules": ["expo.modules.videoplayer.VideoPlayerModule"]
+    "modules": ["expo.modules.vyncvideoplayer.VideoPlayerModule"]
   }
 }

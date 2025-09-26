@@ -11,6 +11,8 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
   // props
   var autoplay: Bool = true
   var beginMuted = true
+  var enableProximityAutoplay: Bool = false
+  var proximityThreshold: CGFloat = 0.3
   var url: URL? {
     didSet {
       if url == nil || url == oldValue {
@@ -31,6 +33,7 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
   
   // Memory management
   private var isNearby: Bool = false
+  private var isInProximityMode: Bool = false
 
   // controls
   private var isLoading: Bool = false {
@@ -103,11 +106,26 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
   private let onTimeRemainingChange = EventDispatcher()
   private let onFullscreenChange = EventDispatcher()
   private let onError = EventDispatcher()
+  private let onPictureInPictureChange = EventDispatcher()
 
   private var enteredFullScreenMuted = true
   private var enteredFullScreenWithIdleTimerDisabled = false
   private var ignoreAutoplay = false
   private var isDestroyed = true
+
+  // Picture-in-Picture support
+  var enablePictureInPicture: Bool = false
+  var pipDimensions: [String: Double] = [:]
+  private var isPictureInPicture: Bool = false {
+    didSet {
+      if isPictureInPicture == oldValue {
+        return
+      }
+      self.onPictureInPictureChange([
+        "isPictureInPicture": isPictureInPicture
+      ])
+    }
+  }
 
   required init(appContext: AppContext? = nil) {
     self.pViewController = AVPlayerViewController()
@@ -179,6 +197,11 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     }
 
     self.ignoreAutoplay = false
+
+    // Exit proximity mode if active
+    if self.isInProximityMode {
+      self.exitProximityMode()
+    }
 
     // Fire final events
     self.pause()
@@ -403,6 +426,26 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     }
   }
 
+  @available(iOS 14.0, *)
+  func playerViewController(
+    _ playerViewController: AVPlayerViewController,
+    willBeginPictureInPictureWithAnimationCoordinator coordinator: UIViewControllerTransitionCoordinator
+  ) {
+    coordinator.animate(alongsideTransition: nil) { _ in
+      self.isPictureInPicture = true
+    }
+  }
+
+  @available(iOS 14.0, *)
+  func playerViewController(
+    _ playerViewController: AVPlayerViewController,
+    willEndPictureInPictureWithAnimationCoordinator coordinator: UIViewControllerTransitionCoordinator
+  ) {
+    coordinator.animate(alongsideTransition: nil) { _ in
+      self.isPictureInPicture = false
+    }
+  }
+
   // MARK: - visibility
 
   func setIsCurrentlyActive(active: Bool) -> Bool {
@@ -416,7 +459,17 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       if self.autoplay || self.forceTakeover {
         self.setup()
       }
-      self.play()
+      
+      // Exit proximity mode when becoming active
+      if self.isInProximityMode {
+        self.exitProximityMode()
+      }
+      
+      // Ensure video is unmuted and playing when becoming active
+      if self.player != nil {
+        self.unmute()
+        self.play()
+      }
     } else if self.isNearby {
       self.pause()
     } else {
@@ -427,6 +480,26 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
   
   func setIsNearby(nearby: Bool) {
     self.isNearby = nearby
+    
+    // Handle proximity-based autoplay
+    if self.enableProximityAutoplay && nearby && !self.isViewActive {
+      let visibilityPercentage = self.calculateVisibilityPercentage()
+      if visibilityPercentage > 0 {
+        // Start preparing immediately when video comes into view
+        self.enterProximityMode()
+        
+        // Configure audio based on threshold
+        if visibilityPercentage >= self.proximityThreshold {
+          self.configureAudioForProximity(shouldPlay: true)
+        } else {
+          self.configureAudioForProximity(shouldPlay: false)
+        }
+      } else {
+        self.exitProximityMode()
+      }
+    } else if !nearby && self.isInProximityMode {
+      self.exitProximityMode()
+    }
   }
 
   // MARK: - controls
@@ -478,6 +551,50 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       self.mute()
     }
   }
+  
+  // MARK: - proximity mode
+  
+  private func enterProximityMode() {
+    guard self.enableProximityAutoplay && !self.isInProximityMode && !self.isViewActive else {
+      return
+    }
+    
+    self.isInProximityMode = true
+    
+    // Setup the player but don't start playing yet
+    if self.player == nil {
+      self.setup()
+    }
+    
+    // Just prepare the player, don't start playing
+    // This ensures smooth transition when it becomes active
+  }
+  
+  private func exitProximityMode() {
+    guard self.isInProximityMode else {
+      return
+    }
+    
+    self.isInProximityMode = false
+    
+    // Pause the video when exiting proximity mode
+    self.pause()
+  }
+  
+  private func configureAudioForProximity(shouldPlay: Bool) {
+    guard self.isInProximityMode && !self.isViewActive else {
+      return
+    }
+    
+    if shouldPlay {
+      // Start playing muted when reaching threshold
+      self.mute()
+      self.play()
+    } else {
+      // Pause when below threshold but keep prepared
+      self.pause()
+    }
+  }
 
   func enterFullscreen(keepDisplayOn: Bool) {
     guard let pViewController = self.pViewController,
@@ -498,6 +615,33 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       if keepDisplayOn {
         UIApplication.shared.isIdleTimerDisabled = true
       }
+    }
+  }
+
+  // MARK: - Picture-in-Picture
+
+  func enterPictureInPicture() {
+    guard let pViewController = self.pViewController,
+          enablePictureInPicture,
+          !isPictureInPicture else {
+      return
+    }
+    
+    if #available(iOS 14.0, *) {
+      pViewController.allowsPictureInPicturePlayback = true
+      pViewController.canStartPictureInPictureAutomaticallyFromInline = false
+      pViewController.startPictureInPicture()
+    }
+  }
+
+  func exitPictureInPicture() {
+    guard let pViewController = self.pViewController,
+          isPictureInPicture else {
+      return
+    }
+    
+    if #available(iOS 14.0, *) {
+      pViewController.stopPictureInPicture()
     }
   }
 }

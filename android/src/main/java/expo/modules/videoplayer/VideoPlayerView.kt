@@ -43,6 +43,10 @@ class VideoPlayerView(
     var autoplay = false
     var beginMuted = true
     var ignoreAutoplay = false
+    
+    // Proximity-based autoplay
+    var enableProximityAutoplay: Boolean = false
+    var proximityThreshold: Double = 0.3
 
     // Thumbnail support
     var thumbnailUrl: String? = null
@@ -51,6 +55,7 @@ class VideoPlayerView(
     
     // Memory management
     private var isNearby: Boolean = false
+    private var isInProximityMode: Boolean = false
 
     var isFullscreen: Boolean = false
         private set(value) {
@@ -126,8 +131,22 @@ class VideoPlayerView(
     private val onTimeRemainingChange by EventDispatcher()
     private val onFullscreenChange by EventDispatcher()
     private val onError by EventDispatcher()
+    private val onPictureInPictureChange by EventDispatcher()
 
     private var enteredFullscreenMuteState = true
+
+    // Picture-in-Picture support
+    var enablePictureInPicture: Boolean = false
+    var pipDimensions: Map<String, Double> = emptyMap()
+    private var isPictureInPicture: Boolean = false
+        set(value) {
+            field = value
+            onPictureInPictureChange(
+                mapOf(
+                    "isPictureInPicture" to value,
+                )
+            )
+        }
 
     init {
         this.playerView = PlayerView(context).apply {
@@ -216,6 +235,11 @@ class VideoPlayerView(
 
         this.isLoading = false
         this.ignoreAutoplay = false
+
+        // Exit proximity mode if active
+        if (this.isInProximityMode) {
+            this.exitProximityMode()
+        }
 
         this.pause()
 
@@ -312,6 +336,50 @@ class VideoPlayerView(
             this.mute()
         }
     }
+    
+    // Proximity mode methods
+    
+    private fun enterProximityMode() {
+        if (!this.enableProximityAutoplay || this.isInProximityMode || this.isViewActive) {
+            return
+        }
+        
+        this.isInProximityMode = true
+        
+        // Setup the player but don't start playing yet
+        if (this.player == null) {
+            this.setup()
+        }
+        
+        // Just prepare the player, don't start playing
+        // This ensures smooth transition when it becomes active
+    }
+    
+    private fun exitProximityMode() {
+        if (!this.isInProximityMode) {
+            return
+        }
+        
+        this.isInProximityMode = false
+        
+        // Pause the video when exiting proximity mode
+        this.pause()
+    }
+    
+    private fun configureAudioForProximity(shouldPlay: Boolean) {
+        if (!this.isInProximityMode || this.isViewActive) {
+            return
+        }
+        
+        if (shouldPlay) {
+            // Start playing muted when reaching threshold
+            this.mute()
+            this.play()
+        } else {
+            // Pause when below threshold but keep prepared
+            this.pause()
+        }
+    }
 
     // Fullscreen handling
 
@@ -353,6 +421,42 @@ class VideoPlayerView(
         this.playerView.player = this.player
     }
 
+    // Picture-in-Picture methods
+    fun enterPictureInPicture() {
+        if (!enablePictureInPicture || isPictureInPicture) {
+            return
+        }
+
+        val currentActivity = this.appContext.currentActivity ?: return
+
+        // Store current state
+        this.isPictureInPicture = true
+
+        // Remove player from current view
+        this.playerView.player = null
+
+        // Create intent for PiP activity
+        val intent = Intent(context, PictureInPictureActivity::class.java)
+        PictureInPictureActivity.associatedVideoView = WeakReference(this)
+
+        // Start PiP activity
+        currentActivity.startActivity(intent)
+    }
+
+    fun exitPictureInPicture() {
+        if (!isPictureInPicture) {
+            return
+        }
+
+        this.isPictureInPicture = false
+        this.playerView.player = this.player
+    }
+
+    fun onExitPictureInPicture() {
+        this.isPictureInPicture = false
+        this.playerView.player = this.player
+    }
+
     // Visibility
 
     fun setIsCurrentlyActive(isActive: Boolean): Boolean {
@@ -365,7 +469,17 @@ class VideoPlayerView(
             if (this.autoplay || this.forceTakeover) {
                 this.setup()
             }
-            this.play()
+            
+            // Exit proximity mode when becoming active
+            if (this.isInProximityMode) {
+                this.exitProximityMode()
+            }
+            
+            // Ensure video is unmuted and playing when becoming active
+            if (this.player != null) {
+                this.unmute()
+                this.play()
+            }
         } else if (this.isNearby) {
             this.pause()
         } else {
@@ -376,6 +490,26 @@ class VideoPlayerView(
     
     fun setIsNearby(nearby: Boolean) {
         this.isNearby = nearby
+        
+        // Handle proximity-based autoplay
+        if (this.enableProximityAutoplay && nearby && !this.isViewActive) {
+            val visibilityPercentage = this.calculateVisibilityPercentage()
+            if (visibilityPercentage > 0) {
+                // Start preparing immediately when video comes into view
+                this.enterProximityMode()
+                
+                // Configure audio based on threshold
+                if (visibilityPercentage >= this.proximityThreshold) {
+                    this.configureAudioForProximity(shouldPlay = true)
+                } else {
+                    this.configureAudioForProximity(shouldPlay = false)
+                }
+            } else {
+                this.exitProximityMode()
+            }
+        } else if (!nearby && this.isInProximityMode) {
+            this.exitProximityMode()
+        }
     }
 
     // Visibility

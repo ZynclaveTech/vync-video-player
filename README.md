@@ -28,6 +28,7 @@ Vync Video Player is a high-performance, cross-platform video player library des
 
 ### **Advanced Playback Features**
 - **Smart Autoplay**: Visibility-based autoplay that only plays videos when they're visible
+- **Proximity-Based Autoplay**: Videos start playing muted when they come within a configurable distance (e.g., 30% visibility) and unmute when they become the active video
 - **Fullscreen Experience**: Native fullscreen mode with proper orientation handling
 - **Audio Focus Management**: Intelligent audio handling that respects system audio policies
 - **Seamless Looping**: Built-in video looping with smooth transitions
@@ -191,6 +192,39 @@ function VideoPlayerWithThumbnails() {
 }
 ```
 
+### Proximity-Based Autoplay (Social Media Style)
+```tsx
+import React from 'react';
+import { ScrollView, View } from 'react-native';
+import { VideoPlayerView } from 'vync-video-player';
+
+const videoData = [
+  { id: '1', url: 'https://example.com/video1.mp4' },
+  { id: '2', url: 'https://example.com/video2.mp4' },
+  { id: '3', url: 'https://example.com/video3.mp4' },
+];
+
+function ProximityVideoFeed() {
+  return (
+    <ScrollView>
+      {videoData.map((video) => (
+        <View key={video.id} style={{ height: 400, marginBottom: 20 }}>
+          <VideoPlayerView
+            url={video.url}
+            autoplay={false} // Disable regular autoplay
+            beginMuted={true}
+            // Enable proximity-based autoplay
+            enableProximityAutoplay={true}
+            proximityThreshold={0.3} // Start playing when 30% visible
+            style={{ flex: 1 }}
+          />
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+```
+
 ### Large Video Feed with Memory Optimization
 ```tsx
 import React from 'react';
@@ -246,6 +280,8 @@ function OptimizedVideoFeed() {
 | `autoplay` | boolean | false | ❌ | Whether to autoplay when video becomes visible |
 | `beginMuted` | boolean | true | ❌ | Whether to start with muted audio |
 | `forceTakeover` | boolean | false | ❌ | Force this player to be active (useful for single video apps) |
+| `enableProximityAutoplay` | boolean | false | ❌ | Enable proximity-based autoplay (plays muted when nearby) |
+| `proximityThreshold` | number | 0.3 | ❌ | Visibility threshold (0.0-1.0) to trigger proximity autoplay |
 | `style` | ViewStyle | - | ❌ | Custom styling for the video player container |
 | `accessibilityLabel` | string | - | ❌ | Accessibility label for screen readers |
 | `accessibilityHint` | string | - | ❌ | Accessibility hint for screen readers |
@@ -328,6 +364,28 @@ The Vync Video Player uses an innovative hybrid memory management system that dr
 - **Scroll Optimization**: Efficient handling of scroll-based video feeds
 - **Battery Optimization**: Respects system power management
 - **Network Awareness**: Adapts to network conditions
+
+### Proximity-Based Autoplay
+The proximity-based autoplay feature provides a smooth, social media-style video experience by intelligently managing video preparation and playback:
+
+- **Immediate Preparation**: Videos start preparing (loading, buffering) as soon as they come into view (even at 1% visibility)
+- **Smart Audio Control**: Videos start playing muted when they reach the proximity threshold (default 30% visibility)
+- **Instant Active Playback**: When a video becomes the active (most visible) video, it unmutes and plays with audio immediately
+- **Single Audio Source**: Only one video plays audio at a time, preventing audio chaos
+- **Configurable Threshold**: Adjust the visibility threshold (0.0-1.0) to control when videos start playing muted
+
+#### How Proximity Autoplay Works
+1. **View Detection**: As soon as a video comes into view (any visibility > 0%), it starts preparing (loads video, sets up buffers)
+2. **Audio Threshold**: When the video reaches the proximity threshold (default 30% visibility), it starts playing muted
+3. **Active Transition**: When the video becomes the most visible (active), it unmutes and plays with audio
+4. **Proximity Exit**: When the video moves away from view, it stops preparing and pauses
+5. **Memory Management**: Prepared videos are kept in memory for instant playback when they become active
+
+#### Use Cases
+- **Social Media Feeds**: Instagram, TikTok-style video scrolling with smooth audio transitions
+- **Video Galleries**: Smooth browsing through video collections
+- **E-commerce**: Product videos that start playing when users scroll near them
+- **Educational Content**: Course videos that preload when students scroll through content
 
 ## Security & Privacy
 

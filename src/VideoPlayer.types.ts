@@ -8,11 +8,25 @@ export type VideoPlayerViewProps = {
   accessibilityHint?: string
   accessibilityLabel?: string
   
+  // Proximity-based autoplay
+  enableProximityAutoplay?: boolean
+  proximityThreshold?: number
+  
   // Thumbnail support
   thumbnailUrl?: string
   showThumbnailWhileLoading?: boolean
   showThumbnailWhenInactive?: boolean
   thumbnailStyle?: StyleProp<ImageStyle>
+
+  // Picture-in-Picture support
+  enablePictureInPicture?: boolean
+  pipDimensions?: {
+    width: number
+    height: number
+  }
+  onPictureInPictureChange?: (
+    e: NativeSyntheticEvent<{isPictureInPicture: boolean}>
+  ) => void
 
   onActiveChange?: (e: NativeSyntheticEvent<{isActive: boolean}>) => void
   onLoadingChange?: (e: NativeSyntheticEvent<{isLoading: boolean}>) => void

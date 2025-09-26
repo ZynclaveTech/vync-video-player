@@ -38,7 +38,8 @@ public class VideoPlayerModule: Module {
         "onStatusChange",
         "onTimeRemainingChange",
         "onFullscreenChange",
-        "onError"
+        "onError",
+        "onPictureInPictureChange"
       ])
 
       Prop("url") { (view: VideoView, prop: URL) in
@@ -57,6 +58,15 @@ public class VideoPlayerModule: Module {
         view.forceTakeover = prop
       }
 
+      // Proximity-based autoplay props
+      Prop("enableProximityAutoplay") { (view: VideoView, prop: Bool) in
+        view.enableProximityAutoplay = prop
+      }
+
+      Prop("proximityThreshold") { (view: VideoView, prop: Double) in
+        view.proximityThreshold = CGFloat(prop)
+      }
+
       // Thumbnail support
       Prop("thumbnailUrl") { (view: VideoView, prop: String?) in
         view.thumbnailUrl = prop
@@ -70,6 +80,15 @@ public class VideoPlayerModule: Module {
         view.showThumbnailWhenInactive = prop
       }
 
+      // Picture-in-Picture props
+      Prop("enablePictureInPicture") { (view: VideoView, prop: Bool) in
+        view.enablePictureInPicture = prop
+      }
+
+      Prop("pipDimensions") { (view: VideoView, prop: [String: Double]) in
+        view.pipDimensions = prop
+      }
+
       AsyncFunction("togglePlayback") { (view: VideoView) in
         view.togglePlayback()
       }
@@ -80,6 +99,15 @@ public class VideoPlayerModule: Module {
 
       AsyncFunction("enterFullscreen") { (view: VideoView, keepDisplayOn: Bool) in
         view.enterFullscreen(keepDisplayOn: keepDisplayOn)
+      }
+
+      // Picture-in-Picture functions
+      AsyncFunction("enterPictureInPicture") { (view: VideoView) in
+        view.enterPictureInPicture()
+      }
+
+      AsyncFunction("exitPictureInPicture") { (view: VideoView) in
+        view.exitPictureInPicture()
       }
     }
   }

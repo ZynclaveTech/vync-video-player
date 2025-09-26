@@ -60,6 +60,7 @@ class VideoPlayerModule : Module() {
                     "onTimeRemainingChange",
                     "onFullscreenChange",
                     "onError",
+                    "onPictureInPictureChange",
                 )
 
                 Prop("url") { view: VideoPlayerView, prop: Uri ->
@@ -78,6 +79,15 @@ class VideoPlayerModule : Module() {
                     view.forceTakeover = prop
                 }
 
+                // Proximity-based autoplay props
+                Prop("enableProximityAutoplay") { view: VideoPlayerView, prop: Boolean ->
+                    view.enableProximityAutoplay = prop
+                }
+
+                Prop("proximityThreshold") { view: VideoPlayerView, prop: Double ->
+                    view.proximityThreshold = prop
+                }
+
                 // Thumbnail support
                 Prop("thumbnailUrl") { view: VideoPlayerView, prop: String? ->
                     view.thumbnailUrl = prop
@@ -91,6 +101,15 @@ class VideoPlayerModule : Module() {
                     view.showThumbnailWhenInactive = prop
                 }
 
+                // Picture-in-Picture props
+                Prop("enablePictureInPicture") { view: VideoPlayerView, prop: Boolean ->
+                    view.enablePictureInPicture = prop
+                }
+
+                Prop("pipDimensions") { view: VideoPlayerView, prop: Map<String, Double> ->
+                    view.pipDimensions = prop
+                }
+
                 AsyncFunction("togglePlayback") { view: VideoPlayerView ->
                     view.togglePlayback()
                 }
@@ -101,6 +120,15 @@ class VideoPlayerModule : Module() {
 
                 AsyncFunction("enterFullscreen") { view: VideoPlayerView, keepDisplayOn: Boolean ->
                     view.enterFullscreen(keepDisplayOn)
+                }
+
+                // Picture-in-Picture functions
+                AsyncFunction("enterPictureInPicture") { view: VideoPlayerView ->
+                    view.enterPictureInPicture()
+                }
+
+                AsyncFunction("exitPictureInPicture") { view: VideoPlayerView ->
+                    view.exitPictureInPicture()
                 }
             }
         }

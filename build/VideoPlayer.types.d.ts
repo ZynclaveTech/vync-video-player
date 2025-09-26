@@ -6,10 +6,20 @@ export type VideoPlayerViewProps = {
     forceTakeover?: boolean;
     accessibilityHint?: string;
     accessibilityLabel?: string;
+    enableProximityAutoplay?: boolean;
+    proximityThreshold?: number;
     thumbnailUrl?: string;
     showThumbnailWhileLoading?: boolean;
     showThumbnailWhenInactive?: boolean;
     thumbnailStyle?: StyleProp<ImageStyle>;
+    enablePictureInPicture?: boolean;
+    pipDimensions?: {
+        width: number;
+        height: number;
+    };
+    onPictureInPictureChange?: (e: NativeSyntheticEvent<{
+        isPictureInPicture: boolean;
+    }>) => void;
     onActiveChange?: (e: NativeSyntheticEvent<{
         isActive: boolean;
     }>) => void;

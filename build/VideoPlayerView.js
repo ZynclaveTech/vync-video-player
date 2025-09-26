@@ -12,6 +12,12 @@ export class VideoPlayerView extends React.Component {
     enterFullscreen = (keepDisplayOn) => {
         this.ref.current?.enterFullscreen(keepDisplayOn ?? false);
     };
+    enterPictureInPicture = () => {
+        this.ref.current?.enterPictureInPicture();
+    };
+    exitPictureInPicture = () => {
+        this.ref.current?.exitPictureInPicture();
+    };
     render() {
         return (<NativeView {...this.props} style={[this.props.style, { flex: 1 }]} ref={this.ref}/>);
     }
