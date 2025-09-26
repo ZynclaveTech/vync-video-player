@@ -16,6 +16,7 @@ Vync Video Player is a high-performance, cross-platform video player library des
 
 ### **Performance & Optimization**
 - **Native Performance**: Built with native iOS (AVPlayer) and Android (ExoPlayer) for optimal performance
+- **HLS Adaptive Streaming**: Automatic resolution adjustment based on network conditions and device capabilities
 - **Hybrid Memory Management**: Smart memory optimization that keeps only nearby videos in memory (3-5 videos), destroying distant ones to reduce memory usage by up to 60%
 - **Lazy Loading**: Videos only load when visible, reducing bandwidth and improving app performance
 - **Optimized Rendering**: Hardware-accelerated video rendering for smooth playback
@@ -393,6 +394,34 @@ The proximity-based autoplay feature provides a smooth, social media-style video
 - **Local Processing**: All video processing happens locally on device
 - **Secure URLs**: Supports HTTPS and secure video sources
 - **Privacy First**: No tracking or external service dependencies
+
+### HLS Adaptive Streaming
+
+The Vync Video Player provides comprehensive support for HLS (HTTP Live Streaming) with automatic resolution adjustment:
+
+#### **iOS Implementation (AVPlayer)**
+- **Automatic Quality Selection**: `preferredPeakBitRate = 0` enables adaptive bitrate streaming
+- **Network-Aware**: Automatically adjusts quality based on available bandwidth
+- **Device Optimization**: Selects appropriate resolution for device capabilities
+- **Seamless Switching**: Smooth transitions between different quality levels
+
+#### **Android Implementation (ExoPlayer)**
+- **Adaptive Track Selection**: Uses `DefaultTrackSelector` with adaptive parameters
+- **Mixed MIME Type Support**: Handles different video formats in the same stream
+- **SD to HD Scaling**: Starts with SD quality and adapts up based on conditions
+- **Buffer Optimization**: Intelligent buffering for smooth quality transitions
+
+#### **Key Benefits**
+- **Bandwidth Efficiency**: Automatically uses the best quality for current network conditions
+- **Battery Optimization**: Reduces power consumption by avoiding unnecessary high-quality streams
+- **User Experience**: Prevents buffering by adapting to network constraints
+- **Cost Effective**: Reduces data usage on mobile networks
+
+#### **Supported Formats**
+- **HLS (.m3u8)**: Full support for Apple's HTTP Live Streaming
+- **DASH**: Dynamic Adaptive Streaming over HTTP
+- **Progressive**: Standard MP4, WebM, and other formats
+- **Live Streaming**: Real-time adaptive streaming support
 
 ## Use Cases
 

@@ -12,6 +12,8 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.bumptech.glide.Glide
@@ -572,6 +574,18 @@ class VideoPlayerView(
                 setLooper(context.mainLooper)
                 setSeekForwardIncrementMs(5000)
                 setSeekBackIncrementMs(5000)
+                
+                // Adaptive streaming for HLS
+                val trackSelector = DefaultTrackSelector(context).apply {
+                    setParameters(
+                        buildUponParameters()
+                            .setMaxVideoSizeSd() // Start with SD, adapt up
+                            .setAllowVideoMixedMimeTypeAdaptiveness(true)
+                            .setAllowAudioMixedMimeTypeAdaptiveness(true)
+                    )
+                }
+                setTrackSelector(trackSelector)
+                
                 // Performance optimizations
                 setLoadControl(
                     DefaultLoadControl.Builder()
