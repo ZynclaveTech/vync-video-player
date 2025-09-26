@@ -475,9 +475,11 @@ class VideoPlayerView(
                 this.exitProximityMode()
             }
             
-            // Ensure video is unmuted and playing when becoming active
+            // Ensure video is playing when becoming active, respecting beginMuted setting
             if (this.player != null) {
-                this.unmute()
+                if (!this.beginMuted) {
+                    this.unmute()
+                }
                 this.play()
             }
         } else if (this.isNearby) {
@@ -582,12 +584,17 @@ class VideoPlayerView(
                             when (playbackState) {
                                 ExoPlayer.STATE_READY -> {
                                     val view = this@VideoPlayerView
+                                    view.isLoading = false
+                                    
+                                    // Apply beginMuted setting regardless of autoplay
+                                    if (view.beginMuted) {
+                                        view.mute()
+                                    } else {
+                                        view.unmute()
+                                    }
+                                    
                                     if (view.autoplay || view.ignoreAutoplay) {
-                                        view.isLoading = false
                                         view.play()
-                                        if (!view.beginMuted) {
-                                            view.unmute()
-                                        }
                                     }
                                 }
                             }

@@ -348,12 +348,16 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     if keyPath == "status" {
       if playerItem.status == AVPlayerItem.Status.readyToPlay {
         self.isLoading = false
+        
+        // Apply beginMuted setting regardless of autoplay
+        if self.beginMuted {
+          self.mute()
+        } else {
+          self.unmute()
+        }
+        
         if self.autoplay || self.ignoreAutoplay {
           self.play()
-
-          if !self.beginMuted {
-            self.unmute()
-          }
         }
       }
       if playerItem.status == AVPlayerItem.Status.failed {
@@ -465,9 +469,11 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
         self.exitProximityMode()
       }
       
-      // Ensure video is unmuted and playing when becoming active
+      // Ensure video is playing when becoming active, respecting beginMuted setting
       if self.player != nil {
-        self.unmute()
+        if !self.beginMuted {
+          self.unmute()
+        }
         self.play()
       }
     } else if self.isNearby {
@@ -631,9 +637,6 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       pViewController.allowsPictureInPicturePlayback = true
       pViewController.canStartPictureInPictureAutomaticallyFromInline = false
       
-      // Note: Picture-in-Picture is typically triggered by user interaction
-      // or system controls. This method enables PiP but doesn't force start it.
-      // The user needs to tap the PiP button in the player controls.
     }
   }
 
@@ -641,12 +644,6 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     guard let pViewController = self.pViewController,
           isPictureInPicture else {
       return
-    }
-    
-    if #available(iOS 14.0, *) {
-      // Note: Picture-in-Picture exit is typically handled by the system
-      // or user interaction. This method is for cleanup purposes.
-      // The actual exit is handled by the delegate methods.
     }
   }
 }
