@@ -49,10 +49,10 @@ class PictureInPictureActivity : AppCompatActivity() {
         setContentView(playerView)
 
         // Enter PiP mode immediately
-        enterPictureInPictureMode()
+        enterPictureInPictureModeInternal()
     }
 
-    private fun enterPictureInPictureMode() {
+    private fun enterPictureInPictureModeInternal() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val pipParams = PictureInPictureParams.Builder()
                 .setAspectRatio(Rational(ASPECT_RATIO_WIDTH, ASPECT_RATIO_HEIGHT))
