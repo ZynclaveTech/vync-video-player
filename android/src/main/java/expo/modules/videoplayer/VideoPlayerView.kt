@@ -364,8 +364,10 @@ class VideoPlayerView(
         
         this.isInProximityMode = false
         
-        // Pause the video when exiting proximity mode
-        this.pause()
+        // Only pause if we're not becoming active (to avoid pause-then-play stuttering)
+        if (!this.isViewActive) {
+            this.pause()
+        }
     }
     
     private fun configureAudioForProximity(shouldPlay: Boolean) {
@@ -473,6 +475,7 @@ class VideoPlayerView(
             }
             
             // Exit proximity mode when becoming active
+            val wasInProximityMode = this.isInProximityMode
             if (this.isInProximityMode) {
                 this.exitProximityMode()
             }
@@ -482,7 +485,10 @@ class VideoPlayerView(
                 if (!this.beginMuted) {
                     this.unmute()
                 }
-                this.play()
+                // Only call play() if we weren't already playing from proximity mode
+                if (!wasInProximityMode) {
+                    this.play()
+                }
             }
         } else if (this.isNearby) {
             this.pause()
@@ -586,12 +592,12 @@ class VideoPlayerView(
                 }
                 setTrackSelector(trackSelector)
                 
-                // Performance optimizations
+                // Performance optimizations - reasonable buffer settings
                 setLoadControl(
                     DefaultLoadControl.Builder()
                         .setBufferDurationsMs(
-                            50000, // Min buffer duration (50s)
-                            120000, // Max buffer duration (2min)
+                            5000, // Min buffer duration (5s)
+                            15000, // Max buffer duration (15s)
                             2500, // Buffer for playback (2.5s)
                             5000 // Buffer for playback after rebuffer (5s)
                         )

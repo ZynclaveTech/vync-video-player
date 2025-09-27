@@ -180,8 +180,8 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     // Get the player item and add it to the player
     DispatchQueue.global(qos: .background).async { [weak self] in
       let playerItem = AVPlayerItem(url: url)
-      // Increase buffer duration for smoother playback
-      playerItem.preferredForwardBufferDuration = 30
+      // Reasonable buffer duration for smooth playback without stuttering
+      playerItem.preferredForwardBufferDuration = 5
       // Enable automatic quality adjustment
       playerItem.preferredPeakBitRate = 0
 
@@ -468,6 +468,7 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
       }
       
       // Exit proximity mode when becoming active
+      let wasInProximityMode = self.isInProximityMode
       if self.isInProximityMode {
         self.exitProximityMode()
       }
@@ -477,7 +478,10 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
         if !self.beginMuted {
           self.unmute()
         }
-        self.play()
+        // Only call play() if we weren't already playing from proximity mode
+        if !wasInProximityMode {
+          self.play()
+        }
       }
     } else if self.isNearby {
       self.pause()
@@ -588,8 +592,10 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     
     self.isInProximityMode = false
     
-    // Pause the video when exiting proximity mode
-    self.pause()
+    // Only pause if we're not becoming active (to avoid pause-then-play stuttering)
+    if !self.isViewActive {
+      self.pause()
+    }
   }
   
   private func configureAudioForProximity(shouldPlay: Bool) {
