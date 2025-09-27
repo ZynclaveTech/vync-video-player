@@ -34,7 +34,6 @@ class VideoPlayerView(
     context: Context,
     appContext: AppContext,
 ) : ExpoView(context, appContext) {
-    private var playerScope: CoroutineScope? = null
 
     private lateinit var playerView: PlayerView
     private lateinit var thumbnailImageView: ImageView
@@ -224,13 +223,10 @@ class VideoPlayerView(
         this.player = player
         this.playerView.player = player
 
-        val playerScope = CoroutineScope(Job() + Dispatchers.Main)
-        playerScope.launch {
-            val mediaItem = createMediaItem()
-            player.setMediaItem(mediaItem)
-            player.prepare()
-        }
-        this.playerScope = playerScope
+        // Create media item and prepare player on main thread for smoother transitions
+        val mediaItem = createMediaItem()
+        player.setMediaItem(mediaItem)
+        player.prepare()
     }
 
     private fun destroy() {
@@ -249,8 +245,6 @@ class VideoPlayerView(
         player.release()
         this.player = null
         this.playerView.player = null
-        this.playerScope?.cancel()
-        this.playerScope = null
         
         // Keep thumbnail visible when video is paused
         this.updateThumbnailVisibility()
@@ -565,13 +559,11 @@ class VideoPlayerView(
 
     // Setup helpers
 
-    private suspend fun createMediaItem(): MediaItem =
-        withContext(Dispatchers.IO) {
-            MediaItem
-                .Builder()
-                .setUri(url.toString())
-                .build()
-        }
+    private fun createMediaItem(): MediaItem =
+        MediaItem
+            .Builder()
+            .setUri(url.toString())
+            .build()
 
     private fun createExoPlayer(): ExoPlayer =
         ExoPlayer

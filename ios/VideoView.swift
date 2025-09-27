@@ -148,16 +148,24 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     self.isDestroyed = false
     self.isLoading = true
 
-    // Setup the view controller
-    let pViewController = AVPlayerViewController()
-    pViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    pViewController.view.backgroundColor = .clear
-    pViewController.view.frame = self.frame
-    pViewController.showsPlaybackControls = false
-    pViewController.delegate = self
-    pViewController.videoGravity = .resizeAspectFill
-    if #available(iOS 16.0, *) {
-      pViewController.allowsVideoFrameAnalysis = false
+    // Setup the view controller only if it doesn't exist
+    if self.pViewController == nil {
+      let pViewController = AVPlayerViewController()
+      pViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+      pViewController.view.backgroundColor = .clear
+      pViewController.view.frame = self.bounds
+      pViewController.showsPlaybackControls = false
+      pViewController.delegate = self
+      pViewController.videoGravity = .resizeAspectFill
+      if #available(iOS 16.0, *) {
+        pViewController.allowsVideoFrameAnalysis = false
+      }
+      
+      self.pViewController = pViewController
+      self.addSubview(pViewController.view)
+    } else {
+      // Update frame if view controller already exists
+      self.pViewController?.view.frame = self.bounds
     }
 
     // Recycle the current player if there is one
@@ -171,25 +179,19 @@ class VideoView: ExpoView, AVPlayerViewControllerDelegate {
     // Add observers to the player
     self.periodicTimeObserver = self.createPeriodicTimeObserver(player)
 
-    pViewController.player = player
-    self.addSubview(pViewController.view)
-
-    self.pViewController = pViewController
+    self.pViewController?.player = player
     self.player = player
 
     // Get the player item and add it to the player
-    DispatchQueue.global(qos: .background).async { [weak self] in
-      let playerItem = AVPlayerItem(url: url)
-      // Reasonable buffer duration for smooth playback without stuttering
-      playerItem.preferredForwardBufferDuration = 5
-      // Enable automatic quality adjustment
-      playerItem.preferredPeakBitRate = 0
+    // Do this on main thread to avoid frame drops during transitions
+    let playerItem = AVPlayerItem(url: url)
+    // Reasonable buffer duration for smooth playback without stuttering
+    playerItem.preferredForwardBufferDuration = 5
+    // Enable automatic quality adjustment
+    playerItem.preferredPeakBitRate = 0
 
-      DispatchQueue.main.async {
-        self?.player?.replaceCurrentItem(with: playerItem)
-        self?.addObserversToPlayerItem(playerItem)
-      }
-    }
+    self.player?.replaceCurrentItem(with: playerItem)
+    self.addObserversToPlayerItem(playerItem)
   }
 
   private func destroy() {
